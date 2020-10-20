@@ -23,21 +23,15 @@ class Peca():
     def calcF(self):
         self.f = self.g + self.h
     def __hash__(self):
-        return hash(repr(self))
+        return hash(str(self.tabuleiro))
 #def caminho(tabuleiro,inicio,fim):
 
 tabuleiroFinal=[1,2,3,4,12,13,14,5,11,0,15,6,10,9,8,7]
 
 def readInput():
-    entrada = list(map(int, input().split()))
-    #listaEntrada=str(input()).split(' ')
-    #entrada=[]
-    #for i in range(0,16):
-        #entrada.append(int(listaEntrada[i]))
-    #print(entrada)
-    #listaEntrada=str("1 3 4 5 12 2 14 6 11 13 15 7 0 10 9 8").split()
-    #entrada = list(map(int,listaEntrada))
-    #print(entrada)  
+    #entrada = list(map(int, input().split()))
+    entrada = list(map(int, ('  12 1 3 0 11 2 15 14 10 13 8 4 9 7 6 5').split()))
+    print(entrada)  
     return entrada
 
 def heuristicaUm(auxTab):
@@ -69,34 +63,36 @@ def geraSucessores(noPai):
         filhos.append(filhoEsq)
     return filhos
 
+def dicionarioadd(dicionario,valor,key):
+    #dicionario = {k:v for k,v in zip(key,valor)}
+    dicionario[key]=valor
+    return dicionario
+def geraHash(key):
+    return hash(key)
+
 def AEstrela(noI):
-    listaAberta=[]    #pqueue 
-    listaFechada=[]     ##definir dps. ->>>map????????
-    listaAberta.append(noI)
+    listaAberta={}    #hashtable 
+    listaFechada=[]
+    dicionarioadd(listaAberta,geraHash(noI),noI)
     selecionado=min(listaAberta)
     count=0
-    while(len(listaAberta)!=0) and selecionado.tabuleiro!=tabuleiroFinal:# and count<=10:
-        count+=1
+    while(len(listaAberta)!=0) and selecionado.tabuleiro!=tabuleiroFinal:
         listaFechada.append(selecionado)
-        for ind,item in enumerate(listaAberta):
-            if item==selecionado:
-                indsel=ind
-        listaAberta.pop(indsel)
+        del listaAberta[selecionado]
         filhos = geraSucessores(selecionado)
         for filho in filhos:
+            chave = geraHash(filho)
             if filho in listaFechada:
                 continue
-            for noA in listaAberta:
-                if filho.tabuleiro==noA.tabuleiro:
-                    if filho.f>noA.f or filho.f ==noA.f:
-                        #print("k")
-                        continue
-            listaAberta.append(filho)
+            if filho in listaAberta:
+                for item in listaAberta:             
+                    if chave == listaAberta.get(item):
+                        if filho.f>item.f or filho.f == item.f:
+                            continue
+            dicionarioadd(listaAberta,geraHash(filho),filho)
         selecionado=min(listaAberta)
     print(selecionado.g)
-    valor=map(hash,listaAberta)
-    teste = {k:v for k,v in zip(listaAberta,valor)}
-    print(teste)
+
 
 def main():
     inicial = Peca(readInput())
