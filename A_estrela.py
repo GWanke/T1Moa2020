@@ -1,6 +1,7 @@
 #import numpy as np
 from copy import deepcopy
 import heapq
+import time
 
 class Peca():
     def __init__(self,tabuleiro,pai=None,g=0):
@@ -30,8 +31,9 @@ class Peca():
 tabuleiroFinal=[1,2,3,4,12,13,14,5,11,0,15,6,10,9,8,7]
 
 def readInput():
-    entrada = list(map(int, input().split()))
-    #entrada = list(map(int, ('  12 1 3 0 11 2 15 14 10 13 8 4 9 7 6 5').split()))
+    #entrada = list(map(int, input().split()))
+    entrada = list(map(int, ('  12 1 3 0 11 2 15 14 10 13 8 4 9 7 6 5').split()))
+    #print(entrada)
     #print(entrada)  
     return entrada
 
@@ -73,22 +75,24 @@ def geraSucessores(noPai):
 
 
 def AEstrela(noI):
-    listaAberta=[]    #heapq 
-    listaFechada=[]
+    #start=time.process_time()
+    aux ={}
+    listaAberta=[]        #heapq 
+    listaFechada=set(aux)   #set
     heapq.heappush(listaAberta,noI)
     selecionado = listaAberta[0]
     while(len(listaAberta)!=0) and selecionado.tabuleiro!=tabuleiroFinal:
-        listaFechada.append(selecionado)
-        heapq.heappop(listaAberta)
-        filhos = geraSucessores(selecionado)
+        listaFechada.add(selecionado)                        
+        heapq.heappop(listaAberta)                              #pop heap min
+        filhos = geraSucessores(selecionado)                    
         for filho in filhos:
             if filho in listaFechada:
                 continue
             if filho in listaAberta:
                 for item in listaAberta:             
-                    if item==filho:
-                        if filho.f>item.f or filho.f == item.f:
-                            continue
+                        if item==filho:
+                            if filho>item: 
+                                continue
             heapq.heappush(listaAberta,filho)
         selecionado=listaAberta[0]
     return selecionado.g
