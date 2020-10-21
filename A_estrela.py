@@ -1,5 +1,6 @@
 #import numpy as np
 from copy import deepcopy
+import heapq
 
 class Peca():
     def __init__(self,tabuleiro,pai=None,g=0):
@@ -29,9 +30,9 @@ class Peca():
 tabuleiroFinal=[1,2,3,4,12,13,14,5,11,0,15,6,10,9,8,7]
 
 def readInput():
-    #entrada = list(map(int, input().split()))
-    entrada = list(map(int, ('  12 1 3 0 11 2 15 14 10 13 8 4 9 7 6 5').split()))
-    print(entrada)  
+    entrada = list(map(int, input().split()))
+    #entrada = list(map(int, ('  12 1 3 0 11 2 15 14 10 13 8 4 9 7 6 5').split()))
+    #print(entrada)  
     return entrada
 
 def heuristicaUm(auxTab):
@@ -63,39 +64,39 @@ def geraSucessores(noPai):
         filhos.append(filhoEsq)
     return filhos
 
-def dicionarioadd(dicionario,valor,key):
-    #dicionario = {k:v for k,v in zip(key,valor)}
-    dicionario[key]=valor
-    return dicionario
-def geraHash(key):
-    return hash(key)
+# def dicionarioadd(dicionario,valor,key):
+#     #dicionario = {k:v for k,v in zip(key,valor)}
+#     dicionario[key]=valor
+#     return dicionario
+# def geraHash(key):
+#     return hash(key)
+
 
 def AEstrela(noI):
-    listaAberta={}    #hashtable 
+    listaAberta=[]    #heapq 
     listaFechada=[]
-    dicionarioadd(listaAberta,geraHash(noI),noI)
-    selecionado=min(listaAberta)
-    count=0
+    heapq.heappush(listaAberta,noI)
+    selecionado = listaAberta[0]
     while(len(listaAberta)!=0) and selecionado.tabuleiro!=tabuleiroFinal:
         listaFechada.append(selecionado)
-        del listaAberta[selecionado]
+        heapq.heappop(listaAberta)
         filhos = geraSucessores(selecionado)
         for filho in filhos:
-            chave = geraHash(filho)
             if filho in listaFechada:
                 continue
             if filho in listaAberta:
                 for item in listaAberta:             
-                    if chave == listaAberta.get(item):
+                    if item==filho:
                         if filho.f>item.f or filho.f == item.f:
                             continue
-            dicionarioadd(listaAberta,geraHash(filho),filho)
-        selecionado=min(listaAberta)
-    print(selecionado.g)
+            heapq.heappush(listaAberta,filho)
+        selecionado=listaAberta[0]
+    return selecionado.g
 
 
 def main():
     inicial = Peca(readInput())
-    AEstrela(inicial)
+    resultado=AEstrela(inicial)
+    print(resultado)
 if __name__ == '__main__':
     main()
