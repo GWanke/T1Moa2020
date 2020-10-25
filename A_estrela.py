@@ -1,18 +1,15 @@
-#import numpy as np
-from copy import deepcopy
+
 import heapq
 import time
-
 tabuleiroFinal=[1,2,3,4,12,13,14,5,11,0,15,6,10,9,8,7]
-
+    
 class Peca():
-    def __init__(self, tabuleiro, pai = None, g = 0):
+    def __init__(self, tabuleiro, indexZero, pai = None, g=0):
         self.tabuleiro = tabuleiro
+        self.indexZero=indexZero
         self.pai = pai
         self.g = g
         self.f = g + heuristicaUm(tabuleiro)
-    #def __str__(self):
-        #return "g = {} , h = {} , f = {} , pai = {},tabuleiro={}".format(self.g,self.h,self.f,self.pai,self.tabuleiro)
     def __repr__(self):
         return "{}".format(self.tabuleiro)
     def __eq__(self, other):
@@ -23,39 +20,44 @@ class Peca():
         return self.f > other.f
     def __hash__(self):
         return hash(str(self.tabuleiro))
-#def caminho(tabuleiro,inicio,fim):
-def readInput():
-    #entrada = list(map(int, input().split()))
-    entrada = list(map(int, ('  12 1 3 0 11 2 15 14 10 13 8 4 9 7 6 5').split()))  
-    return entrada
 
-def heuristicaUm(auxTab):
+def readInput():
+    entrada=list(map(int, input().split()))
+    return entrada,get_indexInicio(entrada)
+
+def heuristicaUm(tabuleiro):
     count=0
     for a in range(0,16):
-        if auxTab[a]!=tabuleiroFinal[a]:
+        if tabuleiro[a]!=tabuleiroFinal[a]:
             count+=1
+    #return len(list(filter(lambda x: x[0] != x[1], zip(tabuleiro, tabuleiroFinal))))
     return count
+def get_indexInicio(tabuleiro):
+    for index,item in enumerate(tabuleiro):
+        if item == 0:
+            indexNulo=index
+            return indexNulo
 
 def geraSucessores(noPai):
-    filhos=[]
-    for index,it in enumerate(noPai.tabuleiro):
-        if it == 0:
-            indexNulo=index
-    if indexNulo >= 4:
-        filhoCima=Peca(noPai.tabuleiro[:],noPai,noPai.g + 1)
-        filhoCima.tabuleiro[indexNulo], filhoCima.tabuleiro[indexNulo - 4] = filhoCima.tabuleiro[indexNulo - 4], 0 
+    if noPai.indexZero >= 4:
+        filhoCima=Peca(noPai.tabuleiro[:], 0,noPai,noPai.g + 1)
+        filhoCima.indexZero = noPai.indexZero - 4
+        filhoCima.tabuleiro[noPai.indexZero], filhoCima.tabuleiro[noPai.indexZero - 4] = filhoCima.tabuleiro[noPai.indexZero - 4], 0 
         yield filhoCima
-    if indexNulo <12 :
-        filhoBaixo=Peca(noPai.tabuleiro[:],noPai,noPai.g + 1)
-        filhoBaixo.tabuleiro[indexNulo], filhoBaixo.tabuleiro[indexNulo + 4] = filhoBaixo.tabuleiro[indexNulo + 4], 0
+    if noPai.indexZero <12 :
+        filhoBaixo=Peca(noPai.tabuleiro[:],0,noPai,noPai.g + 1)
+        filhoBaixo.indexZero = noPai.indexZero + 4
+        filhoBaixo.tabuleiro[noPai.indexZero], filhoBaixo.tabuleiro[noPai.indexZero + 4] = filhoBaixo.tabuleiro[noPai.indexZero + 4], 0
         yield filhoBaixo
-    if indexNulo %4 != 3:
-        filhoDir=Peca(noPai.tabuleiro[:],noPai,noPai.g+1)
-        filhoDir.tabuleiro[indexNulo], filhoDir.tabuleiro[indexNulo+1] = filhoDir.tabuleiro[indexNulo+1], 0 
+    if noPai.indexZero %4 != 3:
+        filhoDir=Peca(noPai.tabuleiro[:],0,noPai,noPai.g + 1)
+        filhoDir.indexZero = noPai.indexZero + 1
+        filhoDir.tabuleiro[noPai.indexZero], filhoDir.tabuleiro[noPai.indexZero + 1] = filhoDir.tabuleiro[noPai.indexZero +1 ], 0 
         yield filhoDir
-    if indexNulo %4 != 0:
-        filhoEsq=Peca(noPai.tabuleiro[:],noPai,noPai.g+1)
-        filhoEsq.tabuleiro[indexNulo], filhoEsq.tabuleiro[indexNulo-1] = filhoEsq.tabuleiro[indexNulo-1], 0
+    if noPai.indexZero %4 != 0:
+        filhoEsq=Peca(noPai.tabuleiro[:],0,noPai,noPai.g+1)
+        filhoEsq.indexZero = noPai.indexZero - 1
+        filhoEsq.tabuleiro[noPai.indexZero], filhoEsq.tabuleiro[noPai.indexZero - 1] = filhoEsq.tabuleiro[noPai.indexZero - 1], 0
         yield filhoEsq
 
 
@@ -64,16 +66,19 @@ def AEstrela(noI):
     listaAberta=[]        #heapq 
     listaFechada=set()   #set
     heapq.heappush(listaAberta,noI)
-    while(selecionado := heapq.heappop(listaAberta)) and selecionado.tabuleiro!= tabuleiroFinal:
+    selecionado = heapq.heappop(listaAberta)
+    while(len(listaAberta)>-1) and selecionado.tabuleiro!= tabuleiroFinal:
         listaFechada.add(selecionado)
-        [heapq.heappush(listaAberta,filho) for filho in geraSucessores(selecionado) if filho not in listaFechada]                        
+        [heapq.heappush(listaAberta,filho) for filho in geraSucessores(selecionado) if filho not in listaFechada]
+        selecionado = heapq.heappop(listaAberta)                        
     print(time.process_time() - start)
     return selecionado.g
 
 
 def main():
-    inicial = Peca(readInput())
-    resultado=AEstrela(inicial)
+    inicial,ind0 = readInput()
+    pecaInicio = Peca(inicial,ind0)
+    resultado = AEstrela(pecaInicio)
     print(resultado)
 if __name__ == '__main__':
     main()
