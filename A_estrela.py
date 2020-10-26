@@ -31,6 +31,8 @@ def heuristicaUm(tabuleiro):
     #return len(list(filter(lambda x: x[0] != x[1], zip(tabuleiro, tabuleiroFinal))))
     return count
 def Spiral(matriz):
+    #RECURSIVIDADE. -> Tira a primeira linha da matriz, rotaciona a matriz, adiciona a primeira linha.
+    #Ex: [0 1 2 3] , [4,5,6,7] , [8,9,10,11].[12,13,14,15] = [0,1,2,3] + Spiral[[7,11,15],[6,10,14],[5,9,13],[4,8,12]] = ...
     return matriz and [*matriz.pop(0)] + Spiral([*zip(*matriz)][::-1])
 
 
@@ -39,12 +41,15 @@ def heuristicaDois(tabuleiro):
     count=0
     aux=0
     mat=[]
+    #transforma em matriz
     for i in range(4):
         mat.append([]) 
         for j in range(4):
             mat[i].append(tabuleiro[aux])
             aux+=1 
-    caracol=Spiral(mat)  
+    #transforma em caracol        
+    caracol=Spiral(mat)
+    #calcula a heuristica  
     for ind,item in enumerate(caracol):
         if ind >0 and ind <14:
             if caracol[ind +1] != item +1:
