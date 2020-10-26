@@ -9,15 +9,13 @@ class Peca():
         self.indexZero=indexZero
         self.pai = pai
         self.g = g
-        self.f = g + heuristicaUm(tabuleiro)
+        self.f = g + heuristicaTres(tabuleiro)
     def __repr__(self):
         return "{}".format(self.tabuleiro)
     def __eq__(self, other):
         return self.tabuleiro == other.tabuleiro 
     def __lt__(self,other):
         return self.f < other.f
-    def __gt__(self, other):
-        return self.f > other.f
     def __hash__(self):
         return hash(str(self.tabuleiro))
 
@@ -32,6 +30,60 @@ def heuristicaUm(tabuleiro):
             count+=1
     #return len(list(filter(lambda x: x[0] != x[1], zip(tabuleiro, tabuleiroFinal))))
     return count
+
+def heuristicaDois(tabuleiro):
+    caracol=list(range(0,16 ))
+    count=0
+    for index,x in enumerate(tabuleiro):
+        if index == 0 or index == 1 or index == 2 or index ==3:
+            caracol[index] = x
+        elif index == 7:
+            caracol[4] = x
+        elif index == 11:
+            caracol[5] = x
+        elif index == 15:
+            caracol[6] = x
+        elif index == 14:
+            caracol[7] =x
+        elif index == 13:
+            caracol[8] = x
+        elif index == 12:
+            caracol[9] = x
+        elif index == 8:
+            caracol[10] = x
+        elif index == 4:
+            caracol[11] = x
+        elif index == 5:
+            caracol[12] = x
+        elif index == 6:
+            caracol[13] = x
+        elif index == 10:
+            caracol[14] = x
+        else:
+            caracol[15] = x
+    for ind,item in enumerate(caracol):
+        if ind >0 and ind <14:
+            if caracol[ind +1] != item +1:
+                count+=1
+    return count
+
+def pos(item):
+    for i,x in enumerate(tabuleiroFinal):
+        if x == item:
+            posX,posY = int(i/ 4) , i % 4
+            return posX,posY
+
+
+def heuristicaTres(tabuleiro):
+    ManhattamDist = 0
+    for i,item in enumerate(tabuleiro):
+        xAtual,yAtual = int(i/ 4) , i % 4
+        xObjetivo,yObjetivo = pos(item)
+        ManhattamDist += abs(xAtual - xObjetivo) + abs(yAtual - yObjetivo)
+    return ManhattamDist
+
+
+
 def get_indexInicio(tabuleiro):
     for index,item in enumerate(tabuleiro):
         if item == 0:
