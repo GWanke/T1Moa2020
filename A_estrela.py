@@ -4,12 +4,12 @@ import time
 tabuleiroFinal=[1,2,3,4,12,13,14,5,11,0,15,6,10,9,8,7]
     
 class Peca():
-    def __init__(self, tabuleiro, indexZero, pai = None, g=0):
+    def __init__(self, tabuleiro, indexZero, pai = None, g = 0):
         self.tabuleiro = tabuleiro
         self.indexZero=indexZero
         self.pai = pai
         self.g = g
-        self.f = g + heuristicaTres(tabuleiro)
+        self.f = g + heuristicaDois(tabuleiro)
     def __repr__(self):
         return "{}".format(self.tabuleiro)
     def __eq__(self, other):
@@ -30,37 +30,21 @@ def heuristicaUm(tabuleiro):
             count+=1
     #return len(list(filter(lambda x: x[0] != x[1], zip(tabuleiro, tabuleiroFinal))))
     return count
+def Spiral(matriz):
+    return matriz and [*matriz.pop(0)] + Spiral([*zip(*matriz)][::-1])
+
 
 def heuristicaDois(tabuleiro):
     caracol=list(range(0,16 ))
     count=0
-    for index,x in enumerate(tabuleiro):
-        if index == 0 or index == 1 or index == 2 or index ==3:
-            caracol[index] = x
-        elif index == 7:
-            caracol[4] = x
-        elif index == 11:
-            caracol[5] = x
-        elif index == 15:
-            caracol[6] = x
-        elif index == 14:
-            caracol[7] =x
-        elif index == 13:
-            caracol[8] = x
-        elif index == 12:
-            caracol[9] = x
-        elif index == 8:
-            caracol[10] = x
-        elif index == 4:
-            caracol[11] = x
-        elif index == 5:
-            caracol[12] = x
-        elif index == 6:
-            caracol[13] = x
-        elif index == 10:
-            caracol[14] = x
-        else:
-            caracol[15] = x
+    aux=0
+    mat=[]
+    for i in range(4):
+        mat.append([]) 
+        for j in range(4):
+            mat[i].append(tabuleiro[aux])
+            aux+=1 
+    caracol=Spiral(mat)  
     for ind,item in enumerate(caracol):
         if ind >0 and ind <14:
             if caracol[ind +1] != item +1:
