@@ -11,7 +11,7 @@ class Peca():
         self.indexZero=indexZero
         self.pai = pai
         self.g = g
-        self.f = g + heuristicaQuatro(tabuleiro)
+        self.f = g + heuristicaCinco(tabuleiro)
     def __repr__(self):
         return "{}".format(self.tabuleiro)
     def __eq__(self, other):
@@ -22,7 +22,8 @@ class Peca():
         return hash(str(self.tabuleiro))
 
 def readInput():
-    entrada=list(map(int, input().split()))
+    #entrada=list(map(int, input().split()))
+    entrada = list(map(int, ('  12 1 3 0 11 2 15 14 10 13 8 4 9 7 6 5').split()))
     return entrada,get_indexInicio(entrada)
 
 def heuristicaUm(tabuleiro):
@@ -79,9 +80,11 @@ def heuristicaQuatro(tabuleiro):
     h1=heuristicaUm(tabuleiro)
     h2=heuristicaDois(tabuleiro)
     h3=heuristicaTres(tabuleiro)
-    #print(int(0.3 * (heuristicaUm(tabuleiro) + 0.3 *(heuristicaDois(tabuleiro) + 0.3 * (heuristicaTres(tabuleiro))))))
-    return int(0.33*(h1) + 0.33 *(h2) + 0.33*(h3))
+    #print(int(0.33 * (h1) + 0.33 *(h2) + 0.33*(h3)))
+    return int(0.15 * (h1) + 0.05 *(h2) + 0.8 * (h3))
 
+def heuristicaCinco(tabuleiro):
+    return max(heuristicaUm(tabuleiro),heuristicaDois(tabuleiro),heuristicaTres(tabuleiro))
 
 
 def get_indexInicio(tabuleiro):
