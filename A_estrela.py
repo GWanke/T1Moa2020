@@ -1,7 +1,6 @@
 
 import heapq
 import time
-import random
 tabuleiroFinal=[1,2,3,4,12,13,14,5,11,0,15,6,10,9,8,7]
 
     
@@ -42,7 +41,7 @@ def Spiral(matriz):
     return matriz and [*matriz.pop(0)] + Spiral([*zip(*matriz)][::-1])
 
 def heuristicaDois(tabuleiro):
-    caracol=list(range(0,16 ))
+    caracol=list(range(0,16))
     count=0
     aux=0
     mat=[]
@@ -56,9 +55,9 @@ def heuristicaDois(tabuleiro):
     caracol=Spiral(mat)
     #calcula a heuristica  
     for ind,item in enumerate(caracol):
-        if ind >0 and ind <14:
-            if caracol[ind +1] != item +1:
-                count+=1
+        if ind > 0 and ind < 14:
+            if caracol[ind +1] != item + 1:
+                count += 1
     return count
 
 def pos(item):
@@ -80,7 +79,6 @@ def heuristicaQuatro(tabuleiro):
     h1=heuristicaUm(tabuleiro)
     h2=heuristicaDois(tabuleiro)
     h3=heuristicaTres(tabuleiro)
-    #print(int(0.33 * (h1) + 0.33 *(h2) + 0.33*(h3)))
     return int(0.15 * (h1) + 0.05 *(h2) + 0.8 * (h3))
 
 def heuristicaCinco(tabuleiro):
@@ -99,18 +97,18 @@ def geraSucessores(noPai):
         filhoCima.indexZero = noPai.indexZero - 4
         filhoCima.tabuleiro[noPai.indexZero], filhoCima.tabuleiro[noPai.indexZero - 4] = filhoCima.tabuleiro[noPai.indexZero - 4], 0 
         yield filhoCima
-    if noPai.indexZero <12 :
+    if noPai.indexZero < 12 :
         filhoBaixo=Peca(noPai.tabuleiro[:],0,noPai,noPai.g + 1)
         filhoBaixo.indexZero = noPai.indexZero + 4
         filhoBaixo.tabuleiro[noPai.indexZero], filhoBaixo.tabuleiro[noPai.indexZero + 4] = filhoBaixo.tabuleiro[noPai.indexZero + 4], 0
         yield filhoBaixo
-    if noPai.indexZero %4 != 3:
+    if noPai.indexZero % 4 != 3:
         filhoDir=Peca(noPai.tabuleiro[:],0,noPai,noPai.g + 1)
         filhoDir.indexZero = noPai.indexZero + 1
         filhoDir.tabuleiro[noPai.indexZero], filhoDir.tabuleiro[noPai.indexZero + 1] = filhoDir.tabuleiro[noPai.indexZero +1 ], 0 
         yield filhoDir
-    if noPai.indexZero %4 != 0:
-        filhoEsq=Peca(noPai.tabuleiro[:],0,noPai,noPai.g+1)
+    if noPai.indexZero % 4 != 0:
+        filhoEsq=Peca(noPai.tabuleiro[:],0,noPai,noPai.g + 1)
         filhoEsq.indexZero = noPai.indexZero - 1
         filhoEsq.tabuleiro[noPai.indexZero], filhoEsq.tabuleiro[noPai.indexZero - 1] = filhoEsq.tabuleiro[noPai.indexZero - 1], 0
         yield filhoEsq
