@@ -10,7 +10,7 @@ class Peca():
         self.indexZero=indexZero
         self.pai = pai
         self.g = g
-        self.f = g + heuristicaCinco(tabuleiro)
+        self.f = g + heuristicaTres(tabuleiro)
     def __repr__(self):
         return "{}".format(self.tabuleiro)
     def __eq__(self, other):
@@ -21,8 +21,8 @@ class Peca():
         return hash(str(self.tabuleiro))
 
 def readInput():
-    #entrada=list(map(int, input().split()))
-    entrada = list(map(int, ('  12 1 3 0 11 2 15 14 10 13 8 4 9 7 6 5').split()))
+    entrada=list(map(int, input().split()))
+    #entrada = list(map(int, ('  12 1 3 0 11 2 15 14 10 13 8 4 9 7 6 5').split()))
     return entrada,get_indexInicio(entrada)
 
 def heuristicaUm(tabuleiro):
@@ -38,7 +38,8 @@ def Spiral(matriz):
     #print (type(matriz))
     #RECURSIVIDADE. -> Tira a primeira linha da matriz, rotaciona a matriz, adiciona a primeira linha.
     #Ex: [0 1 2 3] , [4,5,6,7] , [8,9,10,11].[12,13,14,15] = [0,1,2,3] + Spiral[[7,11,15],[6,10,14],[5,9,13],[4,8,12]] = ...
-    return matriz and [*matriz.pop(0)] + Spiral([*zip(*matriz)][::-1])
+    #return matriz and list(matriz.pop(0)) + Spiral(zip(*matriz)[::-1])      #->Python 2
+    return matriz and [*matriz.pop(0)] + Spiral([*zip(*matriz)][::-1])     #->Python 3
 
 def heuristicaDois(tabuleiro):
     caracol=list(range(0,16))
@@ -131,7 +132,6 @@ def AEstrela(noI):
 def main():
     inicial,ind0 = readInput()
     pecaInicio = Peca(inicial,ind0)
-    heuristicaQuatro(pecaInicio.tabuleiro)
     resultado = AEstrela(pecaInicio)
     print(resultado)
 if __name__ == '__main__':
