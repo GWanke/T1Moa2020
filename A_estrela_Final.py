@@ -3,6 +3,24 @@ import heapq
 import time
 tabuleiroFinal=(1,2,3,4,12,13,14,5,11,0,15,6,10,9,8,7)
 
+dict_pos = {
+    1: (0, 0),
+    2: (0, 1),
+    3: (0, 2),
+    4: (0, 3),
+    12: (1, 0),
+    13: (1, 1),
+    14: (1, 2),
+    5: (1, 3),
+    11: (2, 0),
+    0: (2, 1),
+    15: (2, 2),
+    6: (2, 3),
+    10: (3, 0),
+    9: (3, 1),
+    8: (3, 2),
+    7: (3, 3),
+} 
     
 class Peca():
     def __init__(self, tabuleiro, indexZero, pai = None, g = 0):
@@ -21,7 +39,7 @@ class Peca():
         return hash(self.tabuleiro)
 
 def readInput():
-    entrada=tuple(map(int, raw_input().split()))
+    entrada=tuple(map(int, input().split()))
     #entrada = list(map(int, ('  12 1 3 0 11 2 15 14 10 13 8 4 9 7 6 5').split()))
     return entrada,get_indexInicio(entrada)
 
@@ -38,8 +56,8 @@ def Spiral(matriz):
     #print (type(matriz))
     #RECURSIVIDADE. -> Tira a primeira linha da matriz, rotaciona a matriz, adiciona a primeira linha.
     #Ex: [0 1 2 3] , [4,5,6,7] , [8,9,10,11].[12,13,14,15] = [0,1,2,3] + Spiral[[7,11,15],[6,10,14],[5,9,13],[4,8,12]] = ...
-    return matriz and list(matriz.pop(0)) + Spiral(zip(*matriz)[::-1])      #->Python 2
-    #return matriz and [*matriz.pop(0)] + Spiral([*zip(*matriz)][::-1])     #->Python 3
+    #return matriz and list(matriz.pop(0)) + Spiral(zip(*matriz)[::-1])      #->Python 2
+    return matriz and [*matriz.pop(0)] + Spiral([*zip(*matriz)][::-1])     #->Python 3
 
 def heuristicaDois(tabuleiro):
     caracol=list(range(0,16))
@@ -61,33 +79,13 @@ def heuristicaDois(tabuleiro):
                 count += 1
     return count
 
-def pos(item):
-    # #dic = {
-    dict_pos = {
-        1: (0, 0),
-        2: (0, 1),
-        3: (0, 2),
-        4: (0, 3),
-        12: (1, 0),
-        13: (1, 1),
-        14: (1, 2),
-        5: (1, 3),
-        11: (2, 0),
-        0: (2, 1),
-        15: (2, 2),
-        6: (2, 3),
-        10: (3, 0),
-        9: (3, 1),
-        8: (3, 2),
-        7: (3, 3),
-    }
-    return dict_pos.get(item)[0],dict_pos.get(item)[1]
+
 
 def heuristicaTres(tabuleiro):
     ManhattamDist = 0
     for i,item in enumerate(tabuleiro):
         xAtual,yAtual = int(i/ 4) , i % 4
-        xObjetivo,yObjetivo = pos(item)
+        xObjetivo,yObjetivo = dict_pos[item][0],dict_pos[item][1]
         ManhattamDist += abs(xAtual - xObjetivo) + abs(yAtual - yObjetivo)
     return ManhattamDist
 
@@ -131,7 +129,7 @@ def geraSucessores(noPai):
 
 
 def AEstrela(noI):
-    #start = time.process_time()
+    start = time.process_time()
     listaAberta = []        #heapq 
     listaFechada = set()   #set
     heapq.heappush(listaAberta, noI)
@@ -142,7 +140,7 @@ def AEstrela(noI):
             if filho not in listaFechada:
                 heapq.heappush(listaAberta, Peca(filho, indexZero, selecionado, selecionado.g + 1))
         selecionado = heapq.heappop(listaAberta)
-    #print(time.process_time() - start)
+    print(time.process_time() - start)
     return selecionado.g
 
 
