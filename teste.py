@@ -176,6 +176,7 @@ def AEstrela(noI):
     listaAberta = []        #heapq 
     listaFechada = set()   #set
     auxOpen={}
+    #count=0
     heapq.heappush(listaAberta, noI)
     selecionado = heapq.heappop(listaAberta)
     while selecionado.tabuleiro != tabuleiroFinal:
@@ -183,13 +184,14 @@ def AEstrela(noI):
         for filho, indexZero in geraSucessores(selecionado):
             auxPeca=Peca(filho,indexZero,selecionado.g+1)
             if hash(auxPeca) in auxOpen:
-                if auxPeca.f > auxOpen.get(hash(auxPeca)).f:
+                if auxPeca < auxOpen.get(hash(auxPeca)):
+                    #count+=1
                     continue
             if filho not in listaFechada:    
-                heapq.heappush(listaAberta, Peca(filho, indexZero, selecionado.g + 1))
-                auxOpen[hash(auxPeca)] = auxPeca
+                heapq.heappush(listaAberta,auxPeca)
+                auxOpen [hash(auxPeca)] = auxPeca
         selecionado = heapq.heappop(listaAberta)
-    print(len(listaAberta))
+    print(len(listaAberta),len(auxOpen))
     print(time.process_time() - start)
     return selecionado.g
 
