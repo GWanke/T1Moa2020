@@ -38,12 +38,6 @@ class Peca():
     def __hash__(self):
         return hash(self.tabuleiro)
 
-class ContinueI(Exception):
-    pass
-
-continue_i = ContinueI()
-
-
 def readInput():
     entrada=tuple(map(int, input().split()))
     return entrada,get_indexInicio(entrada)
@@ -136,73 +130,40 @@ def geraSucessores(noPai):
         newIndexNulo = noPai.indexZero - 1
         yield swap_tuple(noPai.tabuleiro, noPai.indexZero, newIndexNulo), newIndexNulo
 
-def contaInversoes(tabuleiro):
-    counter = 0
-    for i in range(len(tabuleiro)):
-        for j in range(i+1,len(tabuleiro)):
-            #print(item,item2)
-            if tabuleiro[i]>tabuleiro[j]:
-                if tabuleiro[j]==0:
-                    continue
-                counter+=1
-    return counter
-
-def isSolvable(tabuleiro):
-    counter=0
-    tupla = list(tabuleiro.tabuleiro)
-    inversoes = contaInversoes(tupla)
-    print(tupla)
-    if tabuleiro.indexZero == 0 or tabuleiro.indexZero == 1 or tabuleiro.indexZero == 2 or tabuleiro.indexZero == 3:
-        linhaZero = 4
-    elif tabuleiro.indexZero == 4 or tabuleiro.indexZero == 5 or tabuleiro.indexZero == 6 or tabuleiro.indexZero == 7:
-        linhaZero = 3
-    elif tabuleiro.indexZero == 8 or tabuleiro.indexZero == 9 or tabuleiro.indexZero == 10 or tabuleiro.indexZero == 11:
-        linhaZero = 2
-    else:
-        linhaZero = 1
-    if linhaZero % 2 == 0:
-        if inversoes % 2 ==1:
-            print("Solucionavel.")
-        else:
-            print("Nao Solucionavel.")
-    else:   
-        if inversoes %2 == 0:
-            print("Solucionavel.")
-        else:
-            print("Nao Solucionavel.")
-
 def AEstrela(noI):
     start = time.process_time()
     listaAberta = []        #heapq 
     listaFechada = set()   #set
     auxOpen={}
-    #count=0
     heapq.heappush(listaAberta, noI)
     selecionado = heapq.heappop(listaAberta)
+    count=0
+    
     while selecionado.tabuleiro != tabuleiroFinal:
         listaFechada.add(selecionado.tabuleiro)
-        for filho, indexZero in geraSucessores(selecionado):
-            auxPeca=Peca(filho,indexZero,selecionado.g+1)
-            if hash(auxPeca) in auxOpen:
-                if auxPeca < auxOpen.get(hash(auxPeca)):
-                    #count+=1
-                    continue
-            if filho not in listaFechada:    
-                heapq.heappush(listaAberta,auxPeca)
-                auxOpen [hash(auxPeca)] = auxPeca
-        selecionado = heapq.heappop(listaAberta)
-    print(len(listaAberta),len(auxOpen))
+        
+        for new_tabuleiro, indexZero in geraSucessores(selecionado):
+            filho=Peca(new_tabuleiro,indexZero,selecionado.g+1)
+
+            if hash(new_tabuleiro) in auxOpen:
+
+                if filho < auxOpen.get(hash(new_tabuleiro)):
+                    continue    
+            
+            if new_tabuleiro not in listaFechada:    
+                heapq.heappush(listaAberta,filho)
+                auxOpen[hash(new_tabuleiro)] = filho
+        
+        selecionado = heapq.heappop(listaAberta) 
+    print(len(listaAberta))
     print(time.process_time() - start)
     return selecionado.g
 
 
 def main():
     inicial,ind0 = readInput()
-    #print(inicial)
     pecaInicio = Peca(inicial,ind0)
-    #isSolvable(pecaInicio)
     resultado = AEstrela(pecaInicio)
-    #print(inicial)
     print(resultado)
 if __name__ == '__main__':
     main()
