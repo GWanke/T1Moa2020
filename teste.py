@@ -313,13 +313,23 @@ def heuristicaDois(tabuleiro):
             if caracol[ind +1] != item + 1:
                 count += 1
     return count
-
+        
+###com memo
 def heuristicaTres(tabuleiro):
     resp = 0
     for i in range(16):
         if (tabuleiro[i] != 0):
             resp += h3memo[tabuleiro[i]][i] 
     return resp
+
+##sem memo    
+# def heuristicaTres(tabuleiro):
+#     ManhattamDist = 0
+#     for i,item in enumerate(tabuleiro):
+#         xAtual,yAtual = int(i/ 4) , i % 4
+#         xObjetivo,yObjetivo = dict_pos[item][0],dict_pos[item][1]
+#         ManhattamDist += abs(xAtual - xObjetivo) + abs(yAtual - yObjetivo)
+#     return ManhattamDist
 
 def heuristicaQuatro(tabuleiro):
     h1=heuristicaUm(tabuleiro)
