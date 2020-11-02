@@ -382,8 +382,8 @@ def AEstrela(noI):
                 auxOpen[hash(new_tabuleiro)] = filho
         
         selecionado = heapq.heappop(listaAberta) 
-    print(psutil.Process().memory_info().rss * 0.000001) ### memoria fisica utilizada, em megabytes(utilizando a base decimal, e nao binaria).
-    print(time.process_time() - start)  ### tempo, em segundos.
+    print(f"{psutil.Process().memory_info().rss * 0.000001} megabites")
+    print(f"{time.process_time() - start } segundos")
     return selecionado.g
 
 
