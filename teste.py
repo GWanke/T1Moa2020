@@ -1,6 +1,7 @@
-
+#!/bin/env python3
 import heapq
 import time
+import psutil
 tabuleiroFinal=(1,2,3,4,12,13,14,5,11,0,15,6,10,9,8,7)
 
 dict_pos = {
@@ -293,9 +294,6 @@ def heuristicaUm(tabuleiro):
 
 
 def Spiral(matriz):
-    #print (type(matriz))
-    #RECURSIVIDADE. -> Tira a primeira linha da matriz, rotaciona a matriz, adiciona a primeira linha.
-    #Ex: [0 1 2 3] , [4,5,6,7] , [8,9,10,11].[12,13,14,15] = [0,1,2,3] + Spiral[[7,11,15],[6,10,14],[5,9,13],[4,8,12]] = ...
     return matriz and list(matriz.pop(0)) + Spiral(zip(*matriz)[::-1])      #->Python 2
     #return matriz and [*matriz.pop(0)] + Spiral([*zip(*matriz)][::-1])     #->Python 3
 
@@ -304,30 +302,18 @@ def heuristicaDois(tabuleiro):
     count=0
     aux=0
     mat=[]
-    #transforma em matriz
     for i in range(4):
         mat.append([]) 
         for j in range(4):
             mat[i].append(tabuleiro[aux])
-            aux+=1 
-    #transforma em caracol        
-    caracol=Spiral(mat)
-    #calcula a heuristica  
+            aux+=1         
+    caracol=Spiral(mat)  
     for ind,item in enumerate(caracol):
         if ind > 0 and ind < 14:
             if caracol[ind +1] != item + 1:
                 count += 1
     return count
 
-
-
-# def heuristicaTres(tabuleiro):
-#     ManhattamDist = 0
-#     for i,item in enumerate(tabuleiro):
-#         xAtual,yAtual = int(i/ 4) , i % 4
-#         xObjetivo,yObjetivo = dict_pos[item][0],dict_pos[item][1]
-#         ManhattamDist += abs(xAtual - xObjetivo) + abs(yAtual - yObjetivo)
-#     return ManhattamDist
 def heuristicaTres(tabuleiro):
     resp = 0
     for i in range(16):
@@ -374,13 +360,12 @@ def geraSucessores(noPai):
         yield swap_tuple(noPai.tabuleiro, noPai.indexZero, newIndexNulo), newIndexNulo
 
 def AEstrela(noI):
-    #start = time.process_time()
+    start = time.process_time()
     listaAberta = []        #heapq 
     listaFechada = set()   #set
     auxOpen={}
     heapq.heappush(listaAberta, noI)
     selecionado = heapq.heappop(listaAberta)
-
     while selecionado.tabuleiro != tabuleiroFinal:
         listaFechada.add(selecionado.tabuleiro)
         
@@ -397,8 +382,8 @@ def AEstrela(noI):
                 auxOpen[hash(new_tabuleiro)] = filho
         
         selecionado = heapq.heappop(listaAberta) 
-    #print(len(listaAberta),len(listaFechada),len(auxOpen))
-    #print(time.process_time() - start)
+    print(psutil.Process().memory_info().rss/1000000) ### memoria fisica utilizada, em megabytes(utilizando a base decimal, e nao binaria).
+    print(time.process_time() - start)  ### tempo, em segundos.
     return selecionado.g
 
 
